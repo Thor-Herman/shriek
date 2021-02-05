@@ -1,3 +1,5 @@
+import workFile from "url:./volume-worklet.js";
+
 export function askMicrophonePermission(onVolume) {
   navigator.getUserMedia =
     navigator.getUserMedia ||
@@ -8,7 +10,7 @@ export function askMicrophonePermission(onVolume) {
     { audio: true },
     async function onMicrophonePermission(stream) {
       const audioContext = new AudioContext();
-      await audioContext.audioWorklet.addModule("./volume-worklet.js");
+      await audioContext.audioWorklet.addModule(workFile);
       const microphoneStream = audioContext.createMediaStreamSource(stream);
 
       const volumeNode = new AudioWorkletNode(audioContext, "volumeworklet");

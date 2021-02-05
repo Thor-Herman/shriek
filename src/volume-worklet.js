@@ -4,9 +4,11 @@ const INTERVAL_MS = 200;
 registerProcessor(
   "volumeworklet",
   class VolumeWorklet extends AudioWorkletProcessor {
-    previousAudioBlockVolumes = [0, 0, 0];
-    previousSampleUpdateFrame = 0;
-    previousSentVolume = 0;
+    constructor() {
+      this.previousAudioBlockVolumes = [0, 0, 0];
+      this.previousSampleUpdateFrame = 0;
+      this.previousSentVolume = 0;
+    }
 
     process(inputs, outputs, parameters) {
       // select first channel (should be mono from microphone)
