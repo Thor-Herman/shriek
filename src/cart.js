@@ -2,8 +2,12 @@
 const CAR_START_SPEED = 0;
 const CAR_START_ANGLE = -Math.PI / 2;
 const CAR_RADIUS = 10;
-const CAR_ACCELERATION = 0.5;
+const CAR_ACCELERATION = 0.3;
+const CAR_ACCELERATION_MIN = 0.1;
+const CAR_ACCELERATION_MAX = 0.3;
 const CAR_ROTATION = 0.04 * Math.PI;
+const CAR_ROTATION_MIN = 0.03 * Math.PI;
+const CAR_ROTATION_MAX = 0.1 * Math.PI;
 const GROUNDSPEED_DECAY_MULT = 0.94;
 const CAR_MIN_TURN_SPEED = 0.5; // Minimum speed to turn
 const CAR_MIN_SPEED = 0.1; // Minimum speed the car can go
@@ -57,11 +61,45 @@ export default class Car {
       if (this.input.forward) {
         this.speed = this.speed + CAR_ACCELERATION;
       }
-      if (this.input.left && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
+      if (this.input.left) {
         this.angle = this.angle - CAR_ROTATION;
       }
-      if (this.input.right && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
+      if (this.input.right) {
         this.angle = this.angle + CAR_ROTATION;
+      }
+    }
+    // Move
+    this.x = this.x + Math.cos(this.angle) * this.speed;
+    this.y = this.y + Math.sin(this.angle) * this.speed;
+
+    // Automatic deceleration
+    if (Math.abs(this.speed) > CAR_MIN_SPEED)
+      this.speed = this.speed * GROUNDSPEED_DECAY_MULT;
+    else this.speed = 0;
+    // Wall bounce
+    // if (this.y <= height / 2 || this.y >= height) this.speed *= -1;
+    // if (this.x >= width || this.x <= 0) this.speed *= -1;
+  }
+
+  updateByVolume(left, right) {
+    const forward = left > 0 || right > 0;
+    const acceleration = Math.min(
+      Math.max(CAR_ACCELERATION_MIN, (left + right) / 2),
+      CAR_ACCELERATION_MAX
+    );
+
+    if (this.outOfControlTimer > 0) {
+      this.outOfControlTimer = this.outOfControlTimer - 1;
+    } else {
+      if (forward) {
+        this.speed = this.speed + acceleration;
+      }
+
+      if (left && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
+        this.angle = this.angle - modifier(left);
+      }
+      if (right && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
+        this.angle = this.angle + modifier(right);
       }
     }
     // Move
@@ -108,4 +146,11 @@ export default class Car {
 
 function toDegrees(angle) {
   return angle * (180 / Math.PI);
+}
+
+function modifier(volume) {
+  return Math.max(
+    Math.min(volume * CAR_ROTATION, CAR_ROTATION_MAX),
+    CAR_ROTATION_MIN
+  );
 }
