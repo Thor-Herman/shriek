@@ -1,4 +1,4 @@
-const ATTACK = 0.8;
+const ATTACK = 0.3;
 const INTERVAL_MS = 200;
 
 registerProcessor(
