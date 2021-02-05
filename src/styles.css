@@ -1,0 +1,12 @@
+body {
+  font-family: sans-serif;
+}
+
+svg {
+  max-width: 100%;
+}
+
+#player {
+  transform-box: fill-box;
+  transform-origin: center;
+}
