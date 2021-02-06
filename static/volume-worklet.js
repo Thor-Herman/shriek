@@ -5,6 +5,7 @@ registerProcessor(
   "volumeworklet",
   class VolumeWorklet extends AudioWorkletProcessor {
     constructor() {
+      super();
       this.previousAudioBlockVolumes = [0, 0, 0];
       this.previousSampleUpdateFrame = 0;
       this.previousSentVolume = 0;
