@@ -2,10 +2,11 @@ function slider(name, cb) {
   const input = document.createElement("input");
   input.setAttribute("type", "range");
   input.setAttribute("min", 0);
-  input.setAttribute("max", 100);
+  input.setAttribute("max", 1);
+  input.setAttribute("step", 0.1);
   input.value = 0;
   input.addEventListener("input", function (e) {
-    cb(e.currentTarget.value / 100);
+    cb(e.currentTarget.value / 1);
   });
 
   const text = document.createTextNode(name);

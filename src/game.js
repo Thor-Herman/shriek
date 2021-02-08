@@ -11,7 +11,7 @@ const player = document.querySelector("#player");
 
 const car = new Cart(player, input);
 
-// const volume = testInput(container);
+const gain = testInput(container);
 let volume = 0;
 askMicrophonePermission((incomingVol) => {
   if (incomingVol > 0.01) volume = incomingVol;
@@ -20,7 +20,7 @@ askMicrophonePermission((incomingVol) => {
 });
 
 function draw() {
-  car.updateByVolume(volume, volume);
+  car.updateByVolume(volume * gain.left, volume * gain.right);
   car.draw();
 }
 
