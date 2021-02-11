@@ -2,7 +2,7 @@ import "./styles.css";
 
 import input from "./input";
 import Cart from "./cart";
-import testInput from "./test-input";
+import controlsInput from "./controls-input";
 import askMicrophonePermission from "./audio";
 
 const container = document.querySelector("#app");
@@ -11,7 +11,7 @@ const player = document.querySelector("#player");
 
 const car = new Cart(player, input);
 
-const gain = testInput(container);
+const controls = controlsInput();
 let volume = 0;
 askMicrophonePermission((incomingVol) => {
   if (incomingVol > 0.01) volume = incomingVol;
@@ -20,7 +20,7 @@ askMicrophonePermission((incomingVol) => {
 });
 
 function draw() {
-  car.updateByVolume(volume * gain.left, volume * gain.right);
+  car.updateByVolume(controls.left, controls.right, volume);
   car.draw();
 }
 

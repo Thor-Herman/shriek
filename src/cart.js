@@ -81,10 +81,10 @@ export default class Car {
     // if (this.x >= width || this.x <= 0) this.speed *= -1;
   }
 
-  updateByVolume(left, right) {
-    const forward = left > 0 || right > 0;
+  updateByVolume(left, right, volume) {
+    const forward = volume > 0;
     const acceleration = Math.min(
-      Math.max(CAR_ACCELERATION_MIN, (left + right) / 2),
+      Math.max(CAR_ACCELERATION_MIN, volume / 2),
       CAR_ACCELERATION_MAX
     );
 
