@@ -17,12 +17,13 @@ export default class Car {
   constructor(
     element,
     input,
+    world,
     radius = CAR_RADIUS,
     speed = CAR_START_SPEED,
     angle = CAR_START_ANGLE
   ) {
     this.element = element;
-
+    this.world = world;
     const rect = element.getBoundingClientRect();
     this.x = rect.x;
     this.y = rect.y;
@@ -84,7 +85,7 @@ export default class Car {
   updateByVolume(left, right, volume) {
     const forward = volume > 0;
     const acceleration = Math.min(
-      Math.max(CAR_ACCELERATION_MIN, volume / 2),
+      Math.max(CAR_ACCELERATION_MIN, volume),
       CAR_ACCELERATION_MAX
     );
 
@@ -103,8 +104,13 @@ export default class Car {
       }
     }
     // Move
-    this.x = this.x + Math.cos(this.angle) * this.speed;
-    this.y = this.y + Math.sin(this.angle) * this.speed;
+    this.world.moveCar(
+      this,
+      this.x + Math.cos(this.angle) * this.speed,
+      this.y + Math.sin(this.angle) * this.speed
+    );
+    // this.x = this.x + Math.cos(this.angle) * this.speed;
+    // this.y = this.y + Math.sin(this.angle) * this.speed;
 
     // Automatic deceleration
     if (Math.abs(this.speed) > CAR_MIN_SPEED)

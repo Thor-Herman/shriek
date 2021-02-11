@@ -4,12 +4,14 @@ import input from "./input";
 import Cart from "./cart";
 import controlsInput from "./controls-input";
 import askMicrophonePermission from "./audio";
+import World from "./world";
 
 const container = document.querySelector("#app");
 const root = document.querySelector("svg");
 const player = document.querySelector("#player");
 
-const car = new Cart(player, input);
+const world = new World(root);
+const car = new Cart(player, input, world);
 
 const controls = controlsInput();
 let volume = 0;
