@@ -23,7 +23,9 @@ askMicrophonePermission((incomingVol) => {
 function draw() {
   car.updateByVolume(controls.left, controls.right, volume);
   car.draw();
-  console.log(car.checkCollision());
+  if (car.checkCollision()) {
+    car.trackBounce();
+  }
 }
 
 window.requestAnimationFrame(mainLoop);
