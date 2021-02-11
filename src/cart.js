@@ -139,6 +139,21 @@ export default class Car {
     this.speed = this.speed * -0.5;
   }
 
+  checkCollision() {
+    const els = this.world.obsticles();
+    var playerRect = this.element.getBoundingClientRect();
+    return Array.from(els).some((item) => {
+      if (!item == this.element) return false;
+      var other = item.getBoundingClientRect();
+      return !(
+        other.left > playerRect.right ||
+        other.right < playerRect.left ||
+        other.top > playerRect.bottom ||
+        other.bottom < playerRect.top
+      );
+    });
+  }
+
   /**
    * Reset ball position and speed
    */
