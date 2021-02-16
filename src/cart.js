@@ -125,6 +125,7 @@ export default class Car {
    * Draw
    */
   draw() {
+    console.log("Client:", this.x, this.y, this.angle);
     let transform = `translate(${this.x}, ${this.y}) rotate(${toDegrees(
       this.angle
     )})`;

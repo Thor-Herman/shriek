@@ -17,7 +17,6 @@ let volume = 0;
 askMicrophonePermission((incomingVol) => {
   if (incomingVol > 0.01) volume = incomingVol;
   else volume = 0;
-  console.log(volume);
 });
 
 function draw() {
