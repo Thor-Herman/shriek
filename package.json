@@ -11,9 +11,7 @@
   "license": "MIT",
   "scripts": {
     "build": "parcel build ./src/index.html",
-    "start": "parcel serve ./src/index.html",
-    "build:server": "parcel build ./src/server.html",
-    "start:server": "parcel serve ./src/server.html --port 1235"
+    "start": "parcel serve ./src/index.html"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.13",
