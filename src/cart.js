@@ -31,6 +31,22 @@ export default class Car {
       this.conn.on("open", () => {
         this.connIsOpened = true;
       });
+      this.conn.on("data", (data) => {
+        const walls = document.querySelector("#walls");
+        if (walls.children.length === 0) {
+          data.forEach((d) => {
+            const svgEl = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              d.nodeName
+            );
+            d.attributes.forEach((a) => {
+              svgEl.setAttribute(a.name, a.value);
+            });
+
+            walls.appendChild(svgEl);
+          });
+        }
+      });
     });
     this.world = world;
     const rect = element.getBoundingClientRect();

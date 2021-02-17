@@ -1,5 +1,3 @@
-import "./styles.css";
-
 import input from "./input";
 import Cart from "./cart";
 import controlsInput from "./controls-input";
