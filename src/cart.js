@@ -13,6 +13,8 @@ const CAR_MIN_TURN_SPEED = 0.5; // Minimum speed to turn
 const CAR_MIN_SPEED = 0.1; // Minimum speed the car can go
 const CAR_BOUNCE_TIMER = 15;
 
+import Peer from "peerjs";
+
 export default class Car {
   constructor(
     element,
@@ -23,6 +25,13 @@ export default class Car {
     angle = CAR_START_ANGLE
   ) {
     this.element = element;
+    this.peer = new Peer(null, { debug: 2 });
+    this.peer.on("open", (c) => {
+      this.conn = this.peer.connect("7yez92nvc9f00000");
+      this.conn.on("open", () => {
+        this.connIsOpened = true;
+      });
+    });
     this.world = world;
     const rect = element.getBoundingClientRect();
     this.x = rect.x;
@@ -125,10 +134,16 @@ export default class Car {
    * Draw
    */
   draw() {
-    console.log("Client:", this.x, this.y, this.angle);
-    let transform = `translate(${this.x}, ${this.y}) rotate(${toDegrees(
+    const transform = `translate(${this.x}, ${this.y}) rotate(${toDegrees(
       this.angle
     )})`;
+
+    if (this.previousTransform === transform) return;
+
+    this.previousTransform = transform;
+    if (this.connIsOpened) {
+      this.conn.send(transform);
+    }
     this.element.setAttribute("transform", transform);
   }
 
@@ -141,7 +156,7 @@ export default class Car {
   }
 
   checkCollision() {
-    const els = this.world.obsticles();
+    const els = this.world.obstacles();
     var playerRect = this.element.getBoundingClientRect();
     return Array.from(els).some((item) => {
       if (!item == this.element) return false;
