@@ -3,12 +3,14 @@ import Cart from "./cart";
 import controlsInput from "./controls-input";
 import askMicrophonePermission from "./audio";
 import World from "./world";
+import Client from "./client";
 
 const container = document.querySelector("#app");
 const root = document.querySelector("svg");
 const player = document.querySelector("#player");
 
 const world = new World(root);
+const peerClient = new Client(world);
 const car = new Cart(player, input, world);
 const controls = controlsInput();
 let volume = 0;
@@ -19,7 +21,9 @@ askMicrophonePermission((incomingVol) => {
 
 function draw() {
   car.updateByVolume(controls.left, controls.right, volume);
-  car.draw();
+  const transform = car.getTransform();
+  car.draw(transform);
+  peerClient.sendTransform(transform);
   if (car.checkCollision()) {
     car.trackBounce();
   }

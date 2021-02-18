@@ -41,18 +41,23 @@ peer.on("error", function (err) {
 
 peer.on("connection", (conn) => {
   const playerId = conn.peer;
-  const playerEl = instantiatePlayer(playerId);
-  conn.on("data", (transform) => {
-    draw(transform, playerEl);
+  const playerEl = spawnPlayer(playerId);
+  conn.on("data", (data) => {
+    switch (data.type) {
+      case "transform":
+        draw(data.payload, playerEl);
+        break;
+    }
   });
   conn.on("open", () => {
-    conn.send(wallElements);
+    conn.send({ type: "walls", payload: wallElements });
   });
+  conn.on("close", () => despawn(playerId));
 });
 
 const svgRoot = document.querySelector("svg");
 
-function instantiatePlayer(playerId) {
+function spawnPlayer(playerId) {
   const playerSvgEl = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "g"
@@ -69,6 +74,11 @@ function instantiatePlayer(playerId) {
 
   svgRoot.appendChild(playerSvgEl);
   return playerSvgEl;
+}
+
+function despawn(playerId) {
+  const el = document.querySelector(`#${playerId}`);
+  if (el) el.remove();
 }
 
 function getRandomColor() {

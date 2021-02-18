@@ -13,9 +13,6 @@ const CAR_MIN_TURN_SPEED = 0.5; // Minimum speed to turn
 const CAR_MIN_SPEED = 0.1; // Minimum speed the car can go
 const CAR_BOUNCE_TIMER = 15;
 
-import Peer from "peerjs";
-import { serverId } from "./shared";
-
 export default class Car {
   constructor(
     element,
@@ -26,29 +23,6 @@ export default class Car {
     angle = CAR_START_ANGLE
   ) {
     this.element = element;
-    this.peer = new Peer(null, { debug: 2 });
-    this.peer.on("open", (c) => {
-      this.conn = this.peer.connect(serverId);
-      this.conn.on("open", () => {
-        this.connIsOpened = true;
-      });
-      this.conn.on("data", (data) => {
-        const walls = document.querySelector("#walls");
-        if (walls.children.length === 0) {
-          data.forEach((d) => {
-            const svgEl = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              d.nodeName
-            );
-            d.attributes.forEach((a) => {
-              svgEl.setAttribute(a.name, a.value);
-            });
-
-            walls.appendChild(svgEl);
-          });
-        }
-      });
-    });
     this.world = world;
     const rect = element.getBoundingClientRect();
     this.x = rect.x;
@@ -76,38 +50,6 @@ export default class Car {
     return this.y + Math.sin(this.angle) * this.speed;
   }
 
-  /**
-   * Update
-   * @param {*} canvas
-   * @param {*} input
-   */
-  update(width, height) {
-    if (this.outOfControlTimer > 0) {
-      this.outOfControlTimer = this.outOfControlTimer - 1;
-    } else {
-      if (this.input.forward) {
-        this.speed = this.speed + CAR_ACCELERATION;
-      }
-      if (this.input.left) {
-        this.angle = this.angle - CAR_ROTATION;
-      }
-      if (this.input.right) {
-        this.angle = this.angle + CAR_ROTATION;
-      }
-    }
-    // Move
-    this.x = this.x + Math.cos(this.angle) * this.speed;
-    this.y = this.y + Math.sin(this.angle) * this.speed;
-
-    // Automatic deceleration
-    if (Math.abs(this.speed) > CAR_MIN_SPEED)
-      this.speed = this.speed * GROUNDSPEED_DECAY_MULT;
-    else this.speed = 0;
-    // Wall bounce
-    // if (this.y <= height / 2 || this.y >= height) this.speed *= -1;
-    // if (this.x >= width || this.x <= 0) this.speed *= -1;
-  }
-
   updateByVolume(left, right, volume) {
     const forward = volume > 0;
     const acceleration = Math.min(
@@ -130,13 +72,8 @@ export default class Car {
       }
     }
     // Move
-    this.world.moveCar(
-      this,
-      this.x + Math.cos(this.angle) * this.speed,
-      this.y + Math.sin(this.angle) * this.speed
-    );
-    // this.x = this.x + Math.cos(this.angle) * this.speed;
-    // this.y = this.y + Math.sin(this.angle) * this.speed;
+    this.x = this.x + Math.cos(this.angle) * this.speed;
+    this.y = this.y + Math.sin(this.angle) * this.speed;
 
     // Automatic deceleration
     if (Math.abs(this.speed) > CAR_MIN_SPEED)
@@ -147,20 +84,11 @@ export default class Car {
     // if (this.x >= width || this.x <= 0) this.speed *= -1;
   }
 
-  /**
-   * Draw
-   */
-  draw() {
-    const transform = `translate(${this.x}, ${this.y}) rotate(${toDegrees(
-      this.angle
-    )})`;
+  getTransform() {
+    return `translate(${this.x}, ${this.y}) rotate(${toDegrees(this.angle)})`;
+  }
 
-    if (this.previousTransform === transform) return;
-
-    this.previousTransform = transform;
-    if (this.connIsOpened) {
-      this.conn.send(transform);
-    }
+  draw(transform) {
     this.element.setAttribute("transform", transform);
   }
 
