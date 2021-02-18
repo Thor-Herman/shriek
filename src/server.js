@@ -1,6 +1,6 @@
 import Peer from "peerjs";
-
-const peer = new Peer("7yez92nvc9f00000", { debug: 2 });
+import { serverId } from "./shared";
+const peer = new Peer(serverId, { debug: 2 });
 
 function extractAttributes(attributes) {
   const map = [];
@@ -27,14 +27,12 @@ const wallElements = extractElementChildren(
   document.querySelector("#walls").children
 );
 
-// console.log(wallElements);
-const player = document.querySelector("#player");
-
-function draw(transform) {
-  player.setAttribute("transform", transform);
+function draw(transform, playerEl) {
+  playerEl.setAttribute("transform", transform);
 }
 
-peer.on("open", function (id) {
+peer.on("open", function () {
+  document.querySelector("#server-id").innerHTML = peer.id;
   console.log("ID: " + peer.id);
 });
 peer.on("error", function (err) {
@@ -42,12 +40,42 @@ peer.on("error", function (err) {
 });
 
 peer.on("connection", (conn) => {
-  console.log("hey conn!");
+  const playerId = conn.peer;
+  const playerEl = instantiatePlayer(playerId);
   conn.on("data", (transform) => {
-    draw(transform);
+    draw(transform, playerEl);
   });
   conn.on("open", () => {
     conn.send(wallElements);
-    conn.send("hey from server");
   });
 });
+
+const svgRoot = document.querySelector("svg");
+
+function instantiatePlayer(playerId) {
+  const playerSvgEl = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "g"
+  );
+  playerSvgEl.id = playerId;
+  playerSvgEl.setAttribute("class", "player");
+
+  const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  pathEl.setAttribute("d", "M44 42.6795L74 60L44 77.3205L44 42.6795Z");
+  pathEl.setAttribute("stroke", getRandomColor());
+  pathEl.setAttribute("stroke-width", "6");
+
+  playerSvgEl.appendChild(pathEl);
+
+  svgRoot.appendChild(playerSvgEl);
+  return playerSvgEl;
+}
+
+function getRandomColor() {
+  var letters = "0123456789ABCDEF";
+  var color = "#";
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}

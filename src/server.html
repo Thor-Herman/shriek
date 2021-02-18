@@ -12,7 +12,7 @@
         max-width: 100%;
       }
 
-      #player {
+      .player {
         transform-box: fill-box;
         transform-origin: center;
       }
@@ -21,6 +21,7 @@
   <body>
     <a href="/">Client</a>
     <a href="/server.html">Server</a>
+    <div><p>Server id: <span id="server-id" /></p></div>
     <div id="app">
       <svg
         width="890"
@@ -50,14 +51,6 @@
             height="12"
             transform="rotate(90 870 13)"
             fill="black"
-          />
-        </g>
-
-        <g id="player">
-          <path
-            d="M44 42.6795L74 60L44 77.3205L44 42.6795Z"
-            stroke="black"
-            stroke-width="6"
           />
         </g>
       </svg>

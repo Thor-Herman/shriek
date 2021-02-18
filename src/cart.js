@@ -14,6 +14,7 @@ const CAR_MIN_SPEED = 0.1; // Minimum speed the car can go
 const CAR_BOUNCE_TIMER = 15;
 
 import Peer from "peerjs";
+import { serverId } from "./shared";
 
 export default class Car {
   constructor(
@@ -27,7 +28,7 @@ export default class Car {
     this.element = element;
     this.peer = new Peer(null, { debug: 2 });
     this.peer.on("open", (c) => {
-      this.conn = this.peer.connect("7yez92nvc9f00000");
+      this.conn = this.peer.connect(serverId);
       this.conn.on("open", () => {
         this.connIsOpened = true;
       });
