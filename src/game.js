@@ -14,6 +14,7 @@ const peerClient = new Client(world);
 const car = new Cart(player, input, world);
 const controls = controlsInput();
 let volume = 0;
+
 askMicrophonePermission((incomingVol) => {
   if (incomingVol > 0.01) volume = incomingVol;
   else volume = 0;
@@ -24,8 +25,10 @@ function draw() {
   const transform = car.getTransform();
   car.draw(transform);
   peerClient.sendTransform(transform);
+
   if (car.checkCollision()) {
     car.trackBounce();
+    car.checkStandStillAndReset();
   }
 }
 

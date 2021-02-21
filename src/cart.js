@@ -1,8 +1,7 @@
 // Car
 const CAR_START_SPEED = 0;
-const CAR_START_ANGLE = -Math.PI / 2;
+const CAR_START_ANGLE = 0;
 const CAR_RADIUS = 10;
-const CAR_ACCELERATION = 0.3;
 const CAR_ACCELERATION_MIN = 0.1;
 const CAR_ACCELERATION_MAX = 0.3;
 const CAR_ROTATION = 0.04 * Math.PI;
@@ -25,13 +24,14 @@ export default class Car {
     this.element = element;
     this.world = world;
     const rect = element.getBoundingClientRect();
-    this.x = rect.x;
-    this.y = rect.y;
+
+    this.x = this.startX = rect.x;
+    this.y = this.startY = rect.y;
 
     this.radius = radius;
     this.speed = speed;
     this.angle = angle;
-    this.outOfControlTimer = 0;
+    this.outOfControlTimer = CAR_BOUNCE_TIMER;
 
     this.input = input;
   }
@@ -58,8 +58,6 @@ export default class Car {
     );
 
     if (this.outOfControlTimer > 0) {
-      this.outOfControlTimer = this.outOfControlTimer - 1;
-    } else {
       if (forward) {
         this.speed = this.speed + acceleration;
       }
@@ -92,11 +90,8 @@ export default class Car {
     this.element.setAttribute("transform", transform);
   }
 
-  /**
-   * Called when the bounces on a wall
-   */
   trackBounce() {
-    this.outOfControlTimer = CAR_BOUNCE_TIMER;
+    this.outOfControlTimer -= 1;
     this.speed = this.speed * -0.5;
   }
 
@@ -115,14 +110,21 @@ export default class Car {
     });
   }
 
+  checkStandStillAndReset() {
+    if (this.outOfControlTimer < 0) {
+      this.reset();
+    }
+  }
+
   /**
    * Reset ball position and speed
    */
-  reset(carStartX, carStartY) {
-    this.x = carStartX;
-    this.y = carStartY;
+  reset() {
+    this.x = this.startX;
+    this.y = this.startY;
     this.speed = CAR_START_SPEED;
     this.angle = CAR_START_ANGLE;
+    this.outOfControlTimer = CAR_BOUNCE_TIMER;
   }
 }
 
