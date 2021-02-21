@@ -14,14 +14,13 @@ const CAR_BOUNCE_TIMER = 15;
 
 export default class Car {
   constructor(
-    element,
     input,
     world,
     radius = CAR_RADIUS,
     speed = CAR_START_SPEED,
     angle = CAR_START_ANGLE
   ) {
-    this.element = element;
+    this.input = input;
     this.world = world;
 
     this.x = this.startX = 0;
@@ -31,25 +30,9 @@ export default class Car {
     this.speed = speed;
     this.angle = angle;
     this.outOfControlTimer = CAR_BOUNCE_TIMER;
-
-    this.input = input;
   }
 
-  /**
-   * Return car's next horizontal position
-   */
-  getNextX() {
-    return this.x + Math.cos(this.angle) * this.speed;
-  }
-
-  /**
-   * Return car's next vertival position
-   */
-  getNextY() {
-    return this.y + Math.sin(this.angle) * this.speed;
-  }
-
-  updateByVolume(left, right, volume) {
+  updateByVolume(volume) {
     const forward = volume > 0;
     const acceleration = Math.min(
       Math.max(CAR_ACCELERATION_MIN, volume),
@@ -61,11 +44,11 @@ export default class Car {
         this.speed = this.speed + acceleration;
       }
 
-      if (left && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
-        this.angle = this.angle - modifier(left);
+      if (this.input.left && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
+        this.angle = this.angle - modifier(this.input.left);
       }
-      if (right && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
-        this.angle = this.angle + modifier(right);
+      if (this.input.right && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
+        this.angle = this.angle + modifier(this.input.right);
       }
     }
     // Move
@@ -76,17 +59,10 @@ export default class Car {
     if (Math.abs(this.speed) > CAR_MIN_SPEED)
       this.speed = this.speed * GROUNDSPEED_DECAY_MULT;
     else this.speed = 0;
-    // Wall bounce
-    // if (this.y <= height / 2 || this.y >= height) this.speed *= -1;
-    // if (this.x >= width || this.x <= 0) this.speed *= -1;
   }
 
   getTransform() {
     return `translate(${this.x}, ${this.y}) rotate(${toDegrees(this.angle)})`;
-  }
-
-  draw(transform) {
-    this.element.setAttribute("transform", transform);
   }
 
   trackBounce() {
@@ -94,9 +70,9 @@ export default class Car {
     this.speed = this.speed * -0.5;
   }
 
-  checkCollision() {
+  checkCollision(player) {
     const els = this.world.obstacles();
-    var playerRect = this.element.getBoundingClientRect();
+    var playerRect = player.getBoundingClientRect();
     return Array.from(els).some((item) => {
       if (!item == this.element) return false;
       var other = item.getBoundingClientRect();

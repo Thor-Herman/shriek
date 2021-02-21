@@ -5,12 +5,12 @@ export default function controlsInput() {
   };
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "a") controls.left = 1;
-    if (e.key === "d") controls.right = 1;
+    if (e.key.toLowerCase() === "a") controls.left = 1;
+    if (e.key.toLowerCase() === "d") controls.right = 1;
   });
   document.addEventListener("keyup", (e) => {
-    if (e.key === "a") controls.left = 0;
-    if (e.key === "d") controls.right = 0;
+    if (e.key.toLowerCase() === "a") controls.left = 0;
+    if (e.key.toLowerCase() === "d") controls.right = 0;
   });
 
   return controls;
