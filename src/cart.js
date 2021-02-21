@@ -23,10 +23,9 @@ export default class Car {
   ) {
     this.element = element;
     this.world = world;
-    const rect = element.getBoundingClientRect();
 
-    this.x = this.startX = rect.x;
-    this.y = this.startY = rect.y;
+    this.x = this.startX = 0;
+    this.y = this.startY = 0;
 
     this.radius = radius;
     this.speed = speed;
