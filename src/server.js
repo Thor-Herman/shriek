@@ -58,6 +58,7 @@ peer.on("connection", (conn) => {
 const svgRoot = document.querySelector("svg");
 
 function spawnPlayer(playerId) {
+  const playerColor = getRandomColor();
   const playerSvgEl = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "g"
@@ -65,11 +66,17 @@ function spawnPlayer(playerId) {
   playerSvgEl.id = playerId;
   playerSvgEl.setAttribute("class", "player");
 
+  // const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  // textEl.setAttribute("stroke", playerColor);
+  // textEl.setAttribute("x", "10");
+  // textEl.textContent = playerId;
+
   const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
   pathEl.setAttribute("d", "M44 42.6795L74 60L44 77.3205L44 42.6795Z");
-  pathEl.setAttribute("stroke", getRandomColor());
+  pathEl.setAttribute("stroke", playerColor);
   pathEl.setAttribute("stroke-width", "6");
 
+  // playerSvgEl.appendChild(textEl);
   playerSvgEl.appendChild(pathEl);
 
   svgRoot.appendChild(playerSvgEl);

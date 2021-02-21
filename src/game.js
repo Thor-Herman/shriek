@@ -34,3 +34,5 @@ function mainLoop() {
   draw();
   window.requestAnimationFrame(mainLoop);
 }
+
+const nickInput = document.querySelector("#nickInput");

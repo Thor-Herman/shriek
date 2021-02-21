@@ -26,4 +26,10 @@ export default class Client {
       this.conn.send({ type: "transform", payload: transform });
     }
   }
+
+  sendNick(nick) {
+    if (this.connIsOpened) {
+      this.conn.send({ type: "nick", payload: nick });
+    }
+  }
 }
