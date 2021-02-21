@@ -2,7 +2,7 @@ import Peer from "peerjs";
 import { serverId } from "./shared";
 
 export default class Client {
-  constructor(world) {
+  constructor(world, player) {
     this.world = world;
     this.peer = new Peer(null, { debug: 2 });
     this.peer.on("open", (c) => {
@@ -13,6 +13,13 @@ export default class Client {
       this.conn.on("data", (data) => {
         if (data.type === "walls") {
           world.drawWalls(data.payload);
+        }
+        if (data.type === "goal") {
+          world.drawGoal(data.payload);
+        }
+        if (data.type === "winner") {
+          alert("Winner!!\n The winner is... " + data.payload);
+          player.reset();
         }
       });
     });

@@ -9,9 +9,9 @@ const root = document.querySelector("svg");
 const player = document.querySelector("#player");
 
 const world = new World(root);
-const peerClient = new Client(world);
 const controls = controlsInput();
 const car = new Cart(controls, world);
+const peerClient = new Client(world, car);
 
 let volume = 0;
 askMicrophonePermission((incomingVol) => {

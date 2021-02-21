@@ -27,6 +27,11 @@ const wallElements = extractElementChildren(
   document.querySelector("#walls").children
 );
 
+const goalElement = extractElementChildren(
+  document.querySelector("#goal").children
+);
+const goalElementPos = document.querySelector("#goal").getBoundingClientRect();
+
 function draw(pos, playerEl) {
   const transform = `translate(${pos.x}, ${pos.y}) rotate(${pos.degrees})`;
   playerEl.setAttribute("transform", transform);
@@ -55,6 +60,13 @@ peer.on("connection", (conn) => {
       case "transform":
         draw(data.payload, playerEl);
         drawNick(data.payload, playerNick);
+
+        if (checkWinner(playerEl)) {
+          conn.send({
+            type: "winner",
+            payload: playerNick.innerText ?? playerEl.getAttribute("stroke"),
+          });
+        }
         break;
       case "nick":
         playerNick.innerText = data.payload?.slice(0, 10);
@@ -63,6 +75,7 @@ peer.on("connection", (conn) => {
   });
   conn.on("open", () => {
     conn.send({ type: "walls", payload: wallElements });
+    conn.send({ type: "goal", payload: goalElement });
   });
   conn.on("close", () => despawn(playerId));
 });
@@ -94,6 +107,17 @@ function spawnPlayer(playerId) {
 
   svgRoot.appendChild(playerSvgEl);
   return playerSvgEl;
+}
+
+function checkWinner(player) {
+  var playerRect = player.getBoundingClientRect();
+
+  return !(
+    goalElementPos.left > playerRect.right ||
+    goalElementPos.right < playerRect.left ||
+    goalElementPos.top > playerRect.bottom ||
+    goalElementPos.bottom < playerRect.top
+  );
 }
 
 function spawNickBox() {
