@@ -27,8 +27,15 @@ const wallElements = extractElementChildren(
   document.querySelector("#walls").children
 );
 
-function draw(transform, playerEl) {
+function draw(pos, playerEl) {
+  const transform = `translate(${pos.x}, ${pos.y}) rotate(${pos.degrees})`;
   playerEl.setAttribute("transform", transform);
+}
+function drawNick(pos, nickDiv) {
+  const baseX = 50;
+  const baseY = 30;
+  nickDiv.style.left = `${baseX + pos.x}px`; //`${transform} rotate(0)`;
+  nickDiv.style.top = `${baseY + pos.y}px`; //`${transform} rotate(0)`;
 }
 
 peer.on("open", function () {
@@ -42,10 +49,15 @@ peer.on("error", function (err) {
 peer.on("connection", (conn) => {
   const playerId = conn.peer;
   const playerEl = spawnPlayer(playerId);
+  const playerNick = spawNickBox();
   conn.on("data", (data) => {
     switch (data.type) {
       case "transform":
         draw(data.payload, playerEl);
+        drawNick(data.payload, playerNick);
+        break;
+      case "nick":
+        playerNick.innerText = data.payload?.slice(0, 10);
         break;
     }
   });
@@ -56,6 +68,7 @@ peer.on("connection", (conn) => {
 });
 
 const svgRoot = document.querySelector("svg");
+const appRoot = document.querySelector("#app");
 
 function spawnPlayer(playerId) {
   const playerColor = getRandomColor();
@@ -81,6 +94,13 @@ function spawnPlayer(playerId) {
 
   svgRoot.appendChild(playerSvgEl);
   return playerSvgEl;
+}
+
+function spawNickBox() {
+  const div = document.createElement("div");
+  div.className = "nick";
+  appRoot.appendChild(div);
+  return div;
 }
 
 function despawn(playerId) {

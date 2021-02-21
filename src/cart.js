@@ -62,7 +62,11 @@ export default class Car {
   }
 
   getTransform() {
-    return `translate(${this.x}, ${this.y}) rotate(${toDegrees(this.angle)})`;
+    return {
+      x: this.x,
+      y: this.y,
+      degrees: toDegrees(this.angle),
+    };
   }
 
   trackBounce() {

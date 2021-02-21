@@ -21,10 +21,10 @@ askMicrophonePermission((incomingVol) => {
 
 function draw() {
   car.updateByVolume(volume);
-  const transform = car.getTransform();
+  const pos = car.getTransform();
+  peerClient.sendTransform(pos);
 
-  // Update states
-  peerClient.sendTransform(transform);
+  const transform = `translate(${pos.x}, ${pos.y}) rotate(${pos.degrees})`;
   player.setAttribute("transform", transform);
 
   if (car.checkCollision(player)) {
@@ -40,3 +40,7 @@ function mainLoop() {
 }
 
 const nickInput = document.querySelector("#nickInput");
+
+nickInput.addEventListener("input", (e) =>
+  peerClient.sendNick(e.currentTarget.value)
+);
