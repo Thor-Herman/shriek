@@ -52,7 +52,7 @@ peer.on("error", function (err) {
 });
 
 function broadcast(message) {
-  Object.keys(peer.connections).forEach(function (setOfConnections) {
+  Object.values(peer.connections).forEach(function (setOfConnections) {
     setOfConnections.forEach((con) => con.send(message));
   });
 }

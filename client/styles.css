@@ -1,26 +1,13 @@
 body {
   font-family: sans-serif;
 }
-
 svg {
   max-width: 100%;
 }
 #app {
   position: relative;
 }
-
-.player {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
 #player {
   transform-box: fill-box;
   transform-origin: center;
-}
-
-.nick {
-  position: absolute;
-  left: 0;
-  top: 0;
 }
