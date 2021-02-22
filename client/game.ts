@@ -4,6 +4,7 @@ import World from "./lib/world";
 
 import askMicrophonePermission from "./audio"; // step 1
 import controlsInput from "./controls-input"; // step 2
+import createTestVolumeProgress from "./lib/test-volume";
 
 const root = document.querySelector("svg");
 const player = document.querySelector("#player");
@@ -19,6 +20,11 @@ const controls = controlsInput();
 // Additional file: audio.ts
 ////////////////////////////////////////
 let volume = 0;
+
+// Tool to help you test volume
+// const setTestVolume = createTestVolumeProgress();
+// setTestVolume(0.5);
+
 askMicrophonePermission((incomingVol) => {
   if (incomingVol > 0.01) volume = incomingVol;
   else volume = 0;
