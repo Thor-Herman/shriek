@@ -1,3 +1,6 @@
+////////////////////////////////////////
+// Step 2: Making input controller modules.
+////////////////////////////////////////
 export default function controlsInput() {
   let controls = {
     isLeftPressed: false,

@@ -1,4 +1,4 @@
-import World from "../world";
+import World from "./world";
 
 // Car
 const CAR_START_SPEED = 0;
@@ -22,7 +22,6 @@ export default class Car {
   private element: Element;
   private world: World;
 
-  private radius: number;
   private speed: number;
   private angle: number;
 
@@ -45,7 +44,6 @@ export default class Car {
     this.x = this.startX = 0;
     this.y = this.startY = 0;
 
-    this.radius = radius;
     this.speed = speed;
     this.angle = angle;
     this.outOfControlTimer = CAR_BOUNCE_TIMER;
@@ -135,10 +133,3 @@ export default class Car {
 function toDegrees(angle: number) {
   return angle * (180 / Math.PI);
 }
-
-// function modifier(volume) {
-//   return Math.max(
-//     Math.min(volume * CAR_ROTATION, CAR_ROTATION_MAX),
-//     CAR_ROTATION_MIN
-//   );
-// }

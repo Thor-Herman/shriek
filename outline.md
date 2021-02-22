@@ -3,9 +3,10 @@
 Utgangspunkt: Starter med en blank "verden" med et spillerikon og car.js som lib som eksponerer nødvendig API, og en rimelig barebones game.js
 
 Timeline:
+
 - Snakk om getUserMedia og AudioContext
 - Deltaker skal implementere en `audio.js` hvor getUserMedia kalles, og en AudioContext med de riktige nodene settes opp. (Inkludere en eller annen artig demo før vi henter inn audio-worklet?). Deretter konsoll-log ut data fra audio-worklet callback.
-- Sende inn callback i metode som implementerer getUserMedia for å "message" volumet ut av `audio.js` 
+- Sende inn callback i metode som implementerer getUserMedia for å "message" volumet ut av `audio.js`
 - Snakke om `requestAnimationFrame` (sammenligne med `setInterval`?). Hvor vi skal bruke det som game-loop, osv.
 - Deltaker implementerer `requestAnimationFrame` hvor volumet sendes inn til `car.updateByVolume`
 - Snakk CSS transforms og bruken av `translate`, `rotate`. Videre snakk om `document.querySelector` og bruke dette for å hente ut spiller-elementet
