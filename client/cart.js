@@ -51,6 +51,7 @@ export default class Car {
         this.angle = this.angle + modifier(this.input.right);
       }
     }
+
     // Move
     this.x = this.x + Math.cos(this.angle) * this.speed;
     this.y = this.y + Math.sin(this.angle) * this.speed;
@@ -95,9 +96,6 @@ export default class Car {
     }
   }
 
-  /**
-   * Reset ball position and speed
-   */
   reset() {
     this.x = this.startX;
     this.y = this.startY;
