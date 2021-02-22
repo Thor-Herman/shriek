@@ -1,5 +1,5 @@
 import Peer from "peerjs";
-import { serverId } from "./shared";
+const serverId = "test-shriek-local";
 
 export default class Client {
   constructor(world, player) {
@@ -11,6 +11,8 @@ export default class Client {
         this.connIsOpened = true;
       });
       this.conn.on("data", (data) => {
+        console.log(data.type, data.payload);
+
         if (data.type === "walls") {
           world.drawWalls(data.payload);
         }

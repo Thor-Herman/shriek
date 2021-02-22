@@ -1,5 +1,5 @@
 import Peer from "peerjs";
-import { serverId } from "./shared";
+const serverId = "test-shriek-local";
 const peer = new Peer(serverId, { debug: 2 });
 
 function extractAttributes(attributes) {
@@ -51,10 +51,17 @@ peer.on("error", function (err) {
   console.log(err);
 });
 
+function broadcast(message) {
+  Object.keys(peer.connections).forEach(function (setOfConnections) {
+    setOfConnections.forEach((con) => con.send(message));
+  });
+}
+
 peer.on("connection", (conn) => {
   const playerId = conn.peer;
   const playerEl = spawnPlayer(playerId);
-  const playerNick = spawNickBox();
+  const playerNick = spawNickBox(playerId);
+
   conn.on("data", (data) => {
     switch (data.type) {
       case "transform":
@@ -62,7 +69,7 @@ peer.on("connection", (conn) => {
         drawNick(data.payload, playerNick);
 
         if (checkWinner(playerEl)) {
-          conn.send({
+          broadcast({
             type: "winner",
             payload: playerNick.innerText ?? playerEl.getAttribute("stroke"),
           });
@@ -120,9 +127,10 @@ function checkWinner(player) {
   );
 }
 
-function spawNickBox() {
+function spawNickBox(playerId) {
   const div = document.createElement("div");
   div.className = "nick";
+  div.id = `${playerId}-nick`;
   appRoot.appendChild(div);
   return div;
 }
@@ -130,6 +138,8 @@ function spawNickBox() {
 function despawn(playerId) {
   const el = document.querySelector(`#${playerId}`);
   if (el) el.remove();
+  const nick = document.querySelector(`#${playerId}-nick`);
+  if (nick) nick.remove();
 }
 
 function getRandomColor() {

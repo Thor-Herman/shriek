@@ -1,8 +1,8 @@
-import Cart from "./cart";
+import Cart from "./lib/cart";
 import controlsInput from "./controls-input";
 import askMicrophonePermission from "./audio";
 import World from "./world";
-import Client from "./client";
+import Client from "./lib/client";
 
 const container = document.querySelector("#app");
 const root = document.querySelector("svg");
