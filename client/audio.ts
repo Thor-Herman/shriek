@@ -1,8 +1,8 @@
-export function askMicrophonePermission(onVolume) {
+export function askMicrophonePermission(onVolume: (volume: number) => void) {
   navigator.getUserMedia =
     navigator.getUserMedia ||
-    navigator.webkitGetUserMedia ||
-    navigator.mozGetUserMedia;
+    (navigator as any).webkitGetUserMedia ||
+    (navigator as any).mozGetUserMedia;
 
   navigator.getUserMedia(
     { audio: true },

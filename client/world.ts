@@ -1,5 +1,7 @@
 export default class World {
-  constructor(rootElement) {
+  private element: Element;
+
+  constructor(rootElement: Element) {
     this.element = rootElement;
   }
 
@@ -15,30 +17,29 @@ export default class World {
     return this.walls.children;
   }
 
-  drawWalls(nodes) {
+  drawWalls(nodes: Element[]) {
     if (this.walls.children.length === 0) {
       nodes.forEach((n) => {
         const svgEl = document.createElementNS(
           "http://www.w3.org/2000/svg",
           n.nodeName
         );
-        n.attributes.forEach((a) => {
+        Array.from(n.attributes).forEach((a) => {
           svgEl.setAttribute(a.name, a.value);
         });
-
         this.walls.appendChild(svgEl);
       });
     }
   }
 
-  drawGoal(nodes) {
+  drawGoal(nodes: Element[]) {
     if (this.goal.children.length === 0) {
       nodes.forEach((n) => {
         const svgEl = document.createElementNS(
           "http://www.w3.org/2000/svg",
           n.nodeName
         );
-        n.attributes.forEach((a) => {
+        Array.from(n.attributes).forEach((a) => {
           svgEl.setAttribute(a.name, a.value);
         });
 

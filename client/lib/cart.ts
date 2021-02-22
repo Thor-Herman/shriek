@@ -1,3 +1,5 @@
+import World from "../world";
+
 // Car
 const CAR_START_SPEED = 0;
 const CAR_START_ANGLE = 0;
@@ -5,22 +7,39 @@ const CAR_RADIUS = 10;
 const CAR_ACCELERATION_MIN = 0.1;
 const CAR_ACCELERATION_MAX = 0.3;
 const CAR_ROTATION = 0.04 * Math.PI;
-const CAR_ROTATION_MIN = 0.03 * Math.PI;
-const CAR_ROTATION_MAX = 0.1 * Math.PI;
 const GROUNDSPEED_DECAY_MULT = 0.94;
 const CAR_MIN_TURN_SPEED = 0.5; // Minimum speed to turn
 const CAR_MIN_SPEED = 0.1; // Minimum speed the car can go
 const CAR_BOUNCE_TIMER = 15;
 
+export type TransformData = {
+  x: number;
+  y: number;
+  degrees: number;
+};
+
 export default class Car {
+  private element: Element;
+  private world: World;
+
+  private radius: number;
+  private speed: number;
+  private angle: number;
+
+  private x: number;
+  private startX: number;
+  private y: number;
+  private startY: number;
+  private outOfControlTimer: number;
+
   constructor(
-    input,
-    world,
+    element: Element,
+    world: World,
     radius = CAR_RADIUS,
     speed = CAR_START_SPEED,
     angle = CAR_START_ANGLE
   ) {
-    this.input = input;
+    this.element = element;
     this.world = world;
 
     this.x = this.startX = 0;
@@ -32,7 +51,7 @@ export default class Car {
     this.outOfControlTimer = CAR_BOUNCE_TIMER;
   }
 
-  updateByVolume(volume) {
+  updateByVolume(isLeft: boolean, isRight: boolean, volume: number) {
     const forward = volume > 0;
     const acceleration = Math.min(
       Math.max(CAR_ACCELERATION_MIN, volume),
@@ -44,11 +63,11 @@ export default class Car {
         this.speed = this.speed + acceleration;
       }
 
-      if (this.input.left && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
-        this.angle = this.angle - modifier(this.input.left);
+      if (isLeft && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
+        this.angle = this.angle - CAR_ROTATION;
       }
-      if (this.input.right && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
-        this.angle = this.angle + modifier(this.input.right);
+      if (isRight && Math.abs(this.speed) > CAR_MIN_TURN_SPEED) {
+        this.angle = this.angle + CAR_ROTATION;
       }
     }
 
@@ -60,40 +79,13 @@ export default class Car {
     if (Math.abs(this.speed) > CAR_MIN_SPEED)
       this.speed = this.speed * GROUNDSPEED_DECAY_MULT;
     else this.speed = 0;
-  }
 
-  getTransform() {
-    return {
-      x: this.x,
-      y: this.y,
-      degrees: toDegrees(this.angle),
-    };
-  }
-
-  trackBounce() {
-    this.outOfControlTimer -= 1;
-    this.speed = this.speed * -0.5;
-  }
-
-  checkCollision(player) {
-    const els = this.world.obstacles();
-    var playerRect = player.getBoundingClientRect();
-    return Array.from(els).some((item) => {
-      if (!item == this.element) return false;
-      var other = item.getBoundingClientRect();
-      return !(
-        other.left > playerRect.right ||
-        other.right < playerRect.left ||
-        other.top > playerRect.bottom ||
-        other.bottom < playerRect.top
-      );
-    });
-  }
-
-  checkStandStillAndReset() {
-    if (this.outOfControlTimer < 0) {
-      this.reset();
+    if (this.checkCollision()) {
+      this.trackBounce();
+      this.checkStandStillAndReset();
     }
+
+    return this.getTransform();
   }
 
   reset() {
@@ -103,15 +95,50 @@ export default class Car {
     this.angle = CAR_START_ANGLE;
     this.outOfControlTimer = CAR_BOUNCE_TIMER;
   }
+
+  private getTransform(): TransformData {
+    return {
+      x: this.x,
+      y: this.y,
+      degrees: toDegrees(this.angle),
+    };
+  }
+
+  private trackBounce() {
+    this.outOfControlTimer -= 1;
+    this.speed = this.speed * -0.5;
+  }
+
+  private checkCollision() {
+    const els = this.world.obstacles();
+    var playerRect = this.element.getBoundingClientRect();
+    return Array.from(els).some((item) => {
+      if (item == this.element) return false;
+      var other = item.getBoundingClientRect();
+
+      return !(
+        other.left > playerRect.right ||
+        other.right < playerRect.left ||
+        other.top > playerRect.bottom ||
+        other.bottom < playerRect.top
+      );
+    });
+  }
+
+  private checkStandStillAndReset() {
+    if (this.outOfControlTimer < 0) {
+      this.reset();
+    }
+  }
 }
 
-function toDegrees(angle) {
+function toDegrees(angle: number) {
   return angle * (180 / Math.PI);
 }
 
-function modifier(volume) {
-  return Math.max(
-    Math.min(volume * CAR_ROTATION, CAR_ROTATION_MAX),
-    CAR_ROTATION_MIN
-  );
-}
+// function modifier(volume) {
+//   return Math.max(
+//     Math.min(volume * CAR_ROTATION, CAR_ROTATION_MAX),
+//     CAR_ROTATION_MIN
+//   );
+// }
