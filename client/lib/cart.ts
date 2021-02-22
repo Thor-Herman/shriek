@@ -1,3 +1,4 @@
+import { TransformData } from "../../types";
 import World from "./world";
 
 // Car
@@ -11,12 +12,6 @@ const GROUNDSPEED_DECAY_MULT = 0.94;
 const CAR_MIN_TURN_SPEED = 0.5; // Minimum speed to turn
 const CAR_MIN_SPEED = 0.1; // Minimum speed the car can go
 const CAR_BOUNCE_TIMER = 15;
-
-export type TransformData = {
-  x: number;
-  y: number;
-  degrees: number;
-};
 
 export default class Car {
   private element: Element;

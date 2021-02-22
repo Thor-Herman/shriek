@@ -1,30 +1,6 @@
 import Peer from "peerjs";
-import { TransformData } from "./cart";
+import { RecieveDataPayload, SendDataPayload } from "../../types";
 const serverId = "test-shriek-local";
-
-export type RecieveDataPayload =
-  | {
-      type: "walls";
-      payload: Element[];
-    }
-  | {
-      type: "goal";
-      payload: Element[];
-    }
-  | {
-      type: "winner";
-      payload: string;
-    };
-
-export type SendDataPayload =
-  | {
-      type: "nick";
-      payload: string;
-    }
-  | {
-      type: "transform";
-      payload: TransformData;
-    };
 
 type Listener = (data: RecieveDataPayload) => void;
 export default function connect(onConnect: () => void) {

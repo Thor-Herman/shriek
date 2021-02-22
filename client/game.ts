@@ -47,6 +47,12 @@ peerClient.onData(function (data) {
     alert("Winner!!\n The winner is... " + data.payload);
     cart.reset();
   }
+  if (data.type === "update-opponents") {
+    world.updateOpponents(data.payload);
+  }
+  if (data.type === "remove-opponents") {
+    world.removeOpponents(data.payload);
+  }
 });
 
 ////////////////////////////////////////

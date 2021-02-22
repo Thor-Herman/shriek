@@ -2,9 +2,6 @@ body {
   font-family: sans-serif;
 }
 
-svg {
-  max-width: 100%;
-}
 #app {
   position: relative;
 }
