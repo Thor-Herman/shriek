@@ -1,89 +1,61 @@
-import Cart from "./lib/cart";
-import connectPeer from "./lib/client";
-import World from "./lib/world";
-
-import askMicrophonePermission from "./audio"; // step 1
-import controlsInput from "./controls-input"; // step 2
+//// Verktøy og filer inkludert for your convenience.
+// Implementeres i oppgave 1
+import askMicrophonePermission from "./audio";
+// hjelpeverktøy for oppgave 1.
 import createTestVolumeProgress from "./lib/test-volume";
 
-const root = document.querySelector("svg");
-const world = new World(root);
+// Implementeres i Oppgave 3
+import controlsInput from "./controls-input";
+// Brukes i oppgave 3
+import Cart from "./lib/cart";
+import World from "./lib/world";
 
-const player = document.querySelector("#player");
-const cart = new Cart(player, world);
-
-// Part of step 2.
-const controls = controlsInput();
+// Brukes i Oppgave 4.
+import connectPeer from "./lib/client";
+// ------
 
 ////////////////////////////////////////
-// Step 1: Implementing volume listener.
-// Additional file: audio.ts
+// Oppgave 1: Volume progress (20min)
+// 1. Implementer uthenting av volum basert på
+//    UserMedia, AudioWorklets
+// 2. Bruk client/lib/test-volume.ts for å bekrefte
+//    at alt fungerer.
 ////////////////////////////////////////
-let volume = 0;
-
 // Tool to help you test volume
 // const setTestVolume = createTestVolumeProgress();
-// setTestVolume(0.5);
-
-askMicrophonePermission((incomingVol) => {
-  if (incomingVol > 0.01) volume = incomingVol;
-  else volume = 0;
-});
+// setTestVolume(0.5); // example
 
 ////////////////////////////////////////
-// Step 4: Connecting to server.
+// Oppgave 2: Drag race (15min)
+// 1. Lag en enkel render-loop.
+// 2. Hent ut player fra DOM, bruk Volume fra tidligere
+//    til å kjøre translateX på Player-elementet.
 ////////////////////////////////////////
-const peerClient = connectPeer(() => {
-  peerClient.send({ type: "nick", payload: "Donkey" });
-});
-peerClient.onData((data) => {
-  switch (data.type) {
-    case "walls":
-      return world.drawWalls(data.payload);
-    case "goal":
-      return world.drawGoal(data.payload);
-    case "update-opponents":
-      return world.updateOpponents(data.payload);
-    case "remove-opponents":
-      return world.removeOpponents(data.payload);
-    case "winner":
-      alert("Winner!!\n The winner is... " + data.payload);
-      return cart.reset();
-  }
-});
 
 ////////////////////////////////////////
-// Step 2: Making cart go forward
+// Oppgave 3: Event Listeners (10min)
+// 1. Lag en ControlInput modul som holder
+//    tilstand på venstre/høyre.
+// 2. Bruk cart.updateByVolume til å hente ut
+//    ny x, y, og degrees.
+// 3. Bruk transform basert på resultat fra
+//    forrige steg.
+// 4. Kjør cart!
 ////////////////////////////////////////
-// let x = 0;
-// let speed = 10;
-// function draw() {
-//   x += volume * speed;
-//   const transform = `translate(${x}, 0)`;
-//   player.setAttribute("transform", transform);
-// }
+// Bruk i oppgave 3 og 4
+// const root = document.querySelector("svg");
+// const world = new World(root);
+// const cart = new Cart(playerElement, world);
 
 ////////////////////////////////////////
-// Step 3: Driving cart
+// Oppgave 4: PeerJS
+// Ta i bruk connectPeer for å koble til server.
+//
+// *NB:* Kan være du må flytte denne blokka opp
+//       over steg 2/3 for å ha tilgang på variabler.
+//
+// 1. Connect og send inn Nick.
+// 2. Tegn vegger, mål og motstandere.
+// 3. Gi varsel (window.alert) om noen vinner.
+// 4. Send nye kordinater via server.
 ////////////////////////////////////////
-function draw() {
-  const pos = cart.updateByVolume(
-    controls.isLeftPressed,
-    controls.isRightPressed,
-    volume
-  );
-  const transform = `translate(${pos.x}, ${pos.y}) rotate(${pos.degrees})`;
-  player.setAttribute("transform", transform);
-
-  // Part of step 3.
-  peerClient.send({ type: "transform", payload: pos });
-}
-
-let raf: number = null;
-window.requestAnimationFrame(mainLoop);
-function mainLoop() {
-  draw();
-
-  cancelAnimationFrame(raf);
-  raf = window.requestAnimationFrame(mainLoop);
-}

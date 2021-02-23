@@ -1,20 +1,4 @@
 ////////////////////////////////////////
-// Step 2: Making input controller modules.
+// Lag en ControlInput modul som holder tilstand på venstre/høyre.
 ////////////////////////////////////////
-export default function controlsInput() {
-  let controls = {
-    isLeftPressed: false,
-    isRightPressed: false,
-  };
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key.toLowerCase() === "a") controls.isLeftPressed = true;
-    if (e.key.toLowerCase() === "d") controls.isRightPressed = true;
-  });
-  document.addEventListener("keyup", (e) => {
-    if (e.key.toLowerCase() === "a") controls.isLeftPressed = false;
-    if (e.key.toLowerCase() === "d") controls.isRightPressed = false;
-  });
-
-  return controls;
-}
+export default function controlsInput() {}
