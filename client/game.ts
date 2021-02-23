@@ -7,9 +7,9 @@ import controlsInput from "./controls-input"; // step 2
 import createTestVolumeProgress from "./lib/test-volume";
 
 const root = document.querySelector("svg");
-const player = document.querySelector("#player");
-
 const world = new World(root);
+
+const player = document.querySelector("#player");
 const cart = new Cart(player, world);
 
 // Part of step 2.
@@ -31,32 +31,40 @@ askMicrophonePermission((incomingVol) => {
 });
 
 ////////////////////////////////////////
-// Step 3: Connecting to server.
+// Step 4: Connecting to server.
 ////////////////////////////////////////
 const peerClient = connectPeer(() => {
   peerClient.send({ type: "nick", payload: "Donkey" });
 });
-peerClient.onData(function (data) {
-  if (data.type === "walls") {
-    world.drawWalls(data.payload);
-  }
-  if (data.type === "goal") {
-    world.drawGoal(data.payload);
-  }
-  if (data.type === "winner") {
-    alert("Winner!!\n The winner is... " + data.payload);
-    cart.reset();
-  }
-  if (data.type === "update-opponents") {
-    world.updateOpponents(data.payload);
-  }
-  if (data.type === "remove-opponents") {
-    world.removeOpponents(data.payload);
+peerClient.onData((data) => {
+  switch (data.type) {
+    case "walls":
+      return world.drawWalls(data.payload);
+    case "goal":
+      return world.drawGoal(data.payload);
+    case "update-opponents":
+      return world.updateOpponents(data.payload);
+    case "remove-opponents":
+      return world.removeOpponents(data.payload);
+    case "winner":
+      alert("Winner!!\n The winner is... " + data.payload);
+      return cart.reset();
   }
 });
 
 ////////////////////////////////////////
-// Step 2: Making cart go.
+// Step 2: Making cart go forward
+////////////////////////////////////////
+// let x = 0;
+// let speed = 10;
+// function draw() {
+//   x += volume * speed;
+//   const transform = `translate(${x}, 0)`;
+//   player.setAttribute("transform", transform);
+// }
+
+////////////////////////////////////////
+// Step 3: Driving cart
 ////////////////////////////////////////
 function draw() {
   const pos = cart.updateByVolume(
@@ -71,8 +79,11 @@ function draw() {
   peerClient.send({ type: "transform", payload: pos });
 }
 
+let raf: number = null;
 window.requestAnimationFrame(mainLoop);
 function mainLoop() {
   draw();
-  window.requestAnimationFrame(mainLoop);
+
+  cancelAnimationFrame(raf);
+  raf = window.requestAnimationFrame(mainLoop);
 }

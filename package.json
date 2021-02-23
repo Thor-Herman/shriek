@@ -10,10 +10,8 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "server-build": "parcel build './{client,server}/*.html'",
-    "server-start": "parcel serve './{client,server}/*.html'",
-    "client-build": "parcel build ./client/index.html",
-    "client-start": "parcel serve ./client/index.html"
+    "build": "parcel build './{client,server}/*.html'",
+    "start": "parcel serve './{client,server}/*.html'"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.13",
