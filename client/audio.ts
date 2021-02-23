@@ -1,31 +1,20 @@
 ////////////////////////////////////////
 // Step 1: Connecting to user media to retrieve volume.
 ////////////////////////////////////////
-export function askMicrophonePermission(onVolume: (volume: number) => void) {
-  navigator.getUserMedia =
-    navigator.getUserMedia ||
-    (navigator as any).webkitGetUserMedia ||
-    (navigator as any).mozGetUserMedia;
+export async function askMicrophonePermission(
+  onVolume: (volume: number) => void
+) {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const audioContext = new AudioContext();
+  const microphoneStream = audioContext.createMediaStreamSource(stream);
 
-  navigator.getUserMedia(
-    { audio: true },
-    async function onMicrophonePermission(stream) {
-      const audioContext = new AudioContext();
-      await audioContext.audioWorklet.addModule("./volume-worklet.js");
-      const microphoneStream = audioContext.createMediaStreamSource(stream);
+  await audioContext.audioWorklet.addModule("./volume-worklet.js");
+  const volumeNode = new AudioWorkletNode(audioContext, "volumeworklet");
+  volumeNode.port.onmessage = (event) => {
+    onVolume(event.data.volume);
+  };
 
-      const volumeNode = new AudioWorkletNode(audioContext, "volumeworklet");
-      volumeNode.port.onmessage = (event) => {
-        onVolume(event.data.volume);
-      };
-
-      microphoneStream.connect(volumeNode).connect(audioContext.destination);
-    },
-    onMicrophoneDenied
-  );
+  microphoneStream.connect(volumeNode).connect(audioContext.destination);
 }
-
-const onMicrophoneDenied = () =>
-  console.error("Microphone access was not granted");
 
 export default askMicrophonePermission;
