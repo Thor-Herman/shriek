@@ -28,7 +28,7 @@ Endre kode under `./client/` for å se resultatet i nettleseren.
 
 ## Oppgaver
 
-Slides: https://varianter.github.io/shriek-slides/
+Slides: http://shriek.variant.no/
 
 #### Oppgave 1: Volume progress (20min)
 
