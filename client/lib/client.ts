@@ -5,11 +5,16 @@ const serverId = "test-shriek-local";
 type Listener = (data: RecieveDataPayload) => void;
 export default function connect(onConnect: () => void) {
   let connIsOpened = false;
-  let conn: Peer.DataConnection = null;
+  let conn: Peer.DataConnection | null = null;
 
   let listener: Listener = () => {};
-  const peer = new Peer(null, { debug: 2 });
-  peer.on("open", (c) => {
+  const peer = new Peer({
+    host: "shrieek-peerjs.herokuapp.com",
+    port: 443,
+    secure: true,
+    debug: 2,
+  });
+  peer.on("open", (_) => {
     conn = peer.connect(serverId);
     conn.on("open", () => {
       connIsOpened = true;
@@ -24,7 +29,7 @@ export default function connect(onConnect: () => void) {
     },
     send: (data: SendDataPayload) => {
       if (connIsOpened) {
-        conn.send(data);
+        conn?.send(data);
       }
     },
   };

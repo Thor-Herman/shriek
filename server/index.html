@@ -319,6 +319,10 @@
       </svg>
     </div>
 
-    <script src="./server.ts"></script>
+    <script>
+      // Hack to avoid issue with PeerJS
+      var parcelRequire;
+    </script>
+    <script type="module" src="./server.ts"></script>
   </body>
 </html>

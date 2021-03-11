@@ -4,7 +4,7 @@
     <title>Shrieeek – Client</title>
     <meta charset="UTF-8" />
 
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./client/styles.css" />
   </head>
   <body>
     <div id="app">
@@ -29,6 +29,10 @@
       </svg>
     </div>
 
-    <script src="./game.ts"></script>
+    <script>
+      // Hack to avoid issue with PeerJS
+      var parcelRequire;
+    </script>
+    <script type="module" src="./client/game.ts"></script>
   </body>
 </html>

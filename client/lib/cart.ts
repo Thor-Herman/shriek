@@ -4,7 +4,6 @@ import World from "./world";
 // Car
 const CAR_START_SPEED = 0;
 const CAR_START_ANGLE = 0;
-const CAR_RADIUS = 10;
 const CAR_ACCELERATION_MIN = 0.1;
 const CAR_ACCELERATION_MAX = 0.3;
 const CAR_ROTATION = 0.04 * Math.PI;
@@ -29,7 +28,6 @@ export default class Car {
   constructor(
     element: Element,
     world: World,
-    radius = CAR_RADIUS,
     speed = CAR_START_SPEED,
     angle = CAR_START_ANGLE
   ) {
