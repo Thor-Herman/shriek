@@ -18,10 +18,10 @@ cd shriek
 yarn
 
 # Start opp løsningen
-yarn start
+yarn dev
 
 # Åpne løsningen i nettleseren.
-open http://localhost:1234
+open http://localhost:3000
 ```
 
 Endre kode under `./client/` for å se resultatet i nettleseren.

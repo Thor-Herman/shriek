@@ -7,19 +7,24 @@ import {
   TransformData,
 } from "../types";
 const serverId = "test-shriek-local";
-const peer = new Peer(serverId, { debug: 2 });
+const peer = new Peer(serverId, {
+  host: "shrieek-peerjs.herokuapp.com",
+  port: 443,
+  secure: true,
+  debug: 2,
+});
 
 const UPDATE_RATE_MULTIPLAYER_IN_MS = 200;
 
 const wallElements = extractElementChildren(
-  document.querySelector("#walls").children
+  document.querySelector("#walls")?.children
 );
 const goalElement = extractElementChildren(
-  document.querySelector("#goal").children
+  document.querySelector("#goal")?.children
 );
 const getOpponents = () =>
   extractElementChildren(document.querySelectorAll(".player"));
-const goalElementPos = document.querySelector("#goal").getBoundingClientRect();
+const goalElementPos = document.querySelector("#goal")?.getBoundingClientRect();
 
 function updateMultiplayer() {
   const opponents = getOpponents();
@@ -49,8 +54,11 @@ function drawNick(pos: TransformData, nickDiv: HTMLElement) {
   nickDiv.style.top = `${baseY + pos.y}px`; //`${transform} rotate(0)`;
 }
 
+const serverIdOutput = document.querySelector("#server-id");
 peer.on("open", function () {
-  document.querySelector("#server-id").innerHTML = peer.id;
+  if (serverIdOutput) {
+    serverIdOutput.innerHTML = peer.id;
+  }
   console.log("ID: " + peer.id);
 });
 peer.on("error", function (err) {
@@ -122,12 +130,13 @@ function spawnPlayer(playerId: string) {
   pathEl.classList.add("player");
 
   // playerSvgEl.appendChild(pathEl);
-  svgRoot.appendChild(pathEl);
+  svgRoot?.appendChild(pathEl);
   return pathEl;
 }
 
 function checkWinner(player: Element) {
   var playerRect = player.getBoundingClientRect();
+  if (!goalElementPos) return false;
 
   return !(
     goalElementPos.left > playerRect.right ||
@@ -141,7 +150,7 @@ function spawNickBox(playerId: string) {
   const div = document.createElement("div");
   div.className = "nick";
   div.id = `${playerId}-nick`;
-  appRoot.appendChild(div);
+  appRoot?.appendChild(div);
   return div;
 }
 
@@ -165,17 +174,20 @@ function extractAttributes(attributes: NamedNodeMap): CustomAttributes[] {
   const map = [];
   for (let i = 0; i < attributes.length; i++) {
     const attr = attributes.item(i);
+    if (!attr) continue;
     map.push({ name: attr.name, value: attr.value });
   }
   return map;
 }
 
 function extractElementChildren(
-  children: HTMLCollection | NodeListOf<Element>
+  children?: HTMLCollection | NodeListOf<Element>
 ): CustomElement[] {
-  const map = [];
+  const map: CustomElement[] = [];
+  if (!children) return map;
   for (let i = 0; i < children.length; i++) {
     const child = children.item(i);
+    if (!child) continue;
     map.push({
       nodeName: child.nodeName,
       attributes: extractAttributes(child.attributes),

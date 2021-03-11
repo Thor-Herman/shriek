@@ -7,9 +7,14 @@ import controlsInput from "./controls-input"; // step 2
 import createTestVolumeProgress from "./lib/test-volume";
 
 const root = document.querySelector("svg");
+const player = document.querySelector("#player");
+
+if (!player || !root) {
+  throw new Error("Player or root not found");
+}
+
 const world = new World(root);
 
-const player = document.querySelector("#player");
 const cart = new Cart(player, world);
 
 // Part of step 2.
@@ -73,13 +78,13 @@ function draw() {
     volume
   );
   const transform = `translate(${pos.x}, ${pos.y}) rotate(${pos.degrees})`;
-  player.setAttribute("transform", transform);
+  player!.setAttribute("transform", transform);
 
   // Part of step 3.
   peerClient.send({ type: "transform", payload: pos });
 }
 
-let raf: number = null;
+let raf: number = 0;
 window.requestAnimationFrame(mainLoop);
 function mainLoop() {
   draw();
