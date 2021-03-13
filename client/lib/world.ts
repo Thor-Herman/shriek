@@ -20,21 +20,21 @@ export default class World {
   }
 
   obstacles() {
-    return this.walls.children;
+    return this.walls?.children ?? [];
   }
 
   drawWalls(nodes: CustomElement[]) {
-    if (this.walls.children.length === 0) {
+    if (this.walls?.children.length === 0) {
       createSvgNodes(nodes).forEach((svgEl) => {
-        this.walls.appendChild(svgEl);
+        this.walls?.appendChild(svgEl);
       });
     }
   }
 
   drawGoal(nodes: CustomElement[]) {
-    if (this.goal.children.length === 0) {
+    if (this.goal?.children.length === 0) {
       createSvgNodes(nodes).forEach((svgEl) => {
-        this.goal.appendChild(svgEl);
+        this.goal?.appendChild(svgEl);
       });
     }
   }
@@ -44,20 +44,22 @@ export default class World {
   }
 
   removeOpponents(playerId: string) {
-    const svgEl = this.opponents.querySelector(`#player-${playerId}`);
+    const svgEl = this.opponents?.querySelector(`#player-${playerId}`);
     if (svgEl) {
       svgEl.remove();
     }
   }
 
   private createOrUpdateNode = (node: CustomElement) => {
-    const existingOpponent = Array.from(this.opponents.children).find((el) => {
-      return el.id == getAttribute(node, "id");
-    });
+    const existingOpponent = Array.from(this.opponents?.children ?? []).find(
+      (el) => {
+        return el.id == getAttribute(node, "id");
+      }
+    );
 
     if (!existingOpponent) {
       const svgEl = createNode(node);
-      this.opponents.appendChild(svgEl);
+      this.opponents?.appendChild(svgEl);
     } else {
       existingOpponent.setAttribute(
         "transform",
@@ -67,7 +69,7 @@ export default class World {
   };
 }
 
-function getAttribute(node: CustomElement, name) {
+function getAttribute(node: CustomElement, name: string) {
   for (let attr of node.attributes) {
     if (attr.name === name) return attr.value;
   }

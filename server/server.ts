@@ -7,19 +7,24 @@ import {
   TransformData,
 } from "../types";
 const serverId = "test-shriek-local";
-const peer = new Peer(serverId, { debug: 2 });
+const peer = new Peer(serverId, {
+  host: "shrieek-peerjs.herokuapp.com",
+  port: 443,
+  secure: true,
+  debug: 2,
+});
 
 const UPDATE_RATE_MULTIPLAYER_IN_MS = 200;
 
 const wallElements = extractElementChildren(
-  document.querySelector("#walls").children
+  document.querySelector("#walls")?.children
 );
 const goalElement = extractElementChildren(
-  document.querySelector("#goal").children
+  document.querySelector("#goal")?.children
 );
 const getOpponents = () =>
   extractElementChildren(document.querySelectorAll(".player"));
-const goalElementPos = document.querySelector("#goal").getBoundingClientRect();
+const goalElementPos = document.querySelector("#goal")?.getBoundingClientRect();
 
 function updateMultiplayer() {
   const opponents = getOpponents();
@@ -44,13 +49,16 @@ function draw(pos: TransformData, playerEl: Element) {
 }
 function drawNick(pos: TransformData, nickDiv: HTMLElement) {
   const baseX = 50;
-  const baseY = 30;
+  const baseY = 80;
   nickDiv.style.left = `${baseX + pos.x}px`; //`${transform} rotate(0)`;
   nickDiv.style.top = `${baseY + pos.y}px`; //`${transform} rotate(0)`;
 }
 
+const serverIdOutput = document.querySelector("#server-id");
 peer.on("open", function () {
-  document.querySelector("#server-id").innerHTML = peer.id;
+  if (serverIdOutput) {
+    serverIdOutput.innerHTML = peer.id;
+  }
   console.log("ID: " + peer.id);
 });
 peer.on("error", function (err) {
@@ -113,19 +121,22 @@ function spawnPlayer(playerId: string) {
   // playerSvgEl.setAttribute("data-color", playerColor);
 
   const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  pathEl.setAttribute("d", "M44 42.6795L74 60L44 77.3205L44 42.6795Z");
-  pathEl.setAttribute("stroke", playerColor);
-  pathEl.setAttribute("stroke-width", "6");
+  pathEl.setAttribute(
+    "d",
+    "M94.5842 127.732L97.8498 108.513C98.1642 107.589 97.9262 107.034 97.6726 106.667C97.0229 105.729 95.6872 105.72 95.4283 105.72L61.0185 106.713L59.0736 107.118C59.0736 107.118 58.0644 106 56.5444 106L53.5929 107C52.5611 107 52 107.495 52 108.483V109.135C52 110.091 52.5593 110.34 53.6294 110.34L57.0315 109.34L58.7468 112.83L61.462 132.319C60.4406 133.428 59.8848 135.044 59.8848 136.552C59.8848 139.87 62.4626 142.929 65.756 142.929C68.8653 142.929 71.1965 139.943 71.5751 138.163H84.0993C84.478 139.943 86.3661 143 89.9167 143C93.1528 143 95.7844 140.127 95.7844 136.814C95.7844 133.519 93.8302 130.598 89.9497 130.598C88.3359 130.598 86.4217 131.488 85.5323 132.823H70.1438C69.0269 131.043 67.5018 130.491 65.9593 130.429L65.7456 129.263H92.1593C93.9242 129.263 94.2716 128.604 94.5842 127.732Z"
+  );
+  pathEl.setAttribute("fill", playerColor);
   pathEl.id = playerId;
   pathEl.classList.add("player");
 
   // playerSvgEl.appendChild(pathEl);
-  svgRoot.appendChild(pathEl);
+  svgRoot?.appendChild(pathEl);
   return pathEl;
 }
 
 function checkWinner(player: Element) {
   var playerRect = player.getBoundingClientRect();
+  if (!goalElementPos) return false;
 
   return !(
     goalElementPos.left > playerRect.right ||
@@ -139,7 +150,7 @@ function spawNickBox(playerId: string) {
   const div = document.createElement("div");
   div.className = "nick";
   div.id = `${playerId}-nick`;
-  appRoot.appendChild(div);
+  appRoot?.appendChild(div);
   return div;
 }
 
@@ -163,17 +174,20 @@ function extractAttributes(attributes: NamedNodeMap): CustomAttributes[] {
   const map = [];
   for (let i = 0; i < attributes.length; i++) {
     const attr = attributes.item(i);
+    if (!attr) continue;
     map.push({ name: attr.name, value: attr.value });
   }
   return map;
 }
 
 function extractElementChildren(
-  children: HTMLCollection | NodeListOf<Element>
+  children?: HTMLCollection | NodeListOf<Element>
 ): CustomElement[] {
-  const map = [];
+  const map: CustomElement[] = [];
+  if (!children) return map;
   for (let i = 0; i < children.length; i++) {
     const child = children.item(i);
+    if (!child) continue;
     map.push({
       nodeName: child.nodeName,
       attributes: extractAttributes(child.attributes),
