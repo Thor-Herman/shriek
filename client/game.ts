@@ -4,7 +4,6 @@ import World from "./lib/world";
 
 import askMicrophonePermission from "./audio"; // step 1
 import controlsInput from "./controls-input"; // step 2
-import createTestVolumeProgress from "./lib/test-volume";
 
 const root = document.querySelector("svg");
 const player = document.querySelector("#player");
@@ -14,7 +13,6 @@ if (!player || !root) {
 }
 
 const world = new World(root);
-
 const cart = new Cart(player, world);
 
 // Part of step 2.
@@ -58,7 +56,7 @@ peerClient.onData((data) => {
 });
 
 ////////////////////////////////////////
-// Step 2: Making cart go forward
+// Step 2: Drive cart
 ////////////////////////////////////////
 // let x = 0;
 // let speed = 10;
@@ -68,9 +66,6 @@ peerClient.onData((data) => {
 //   player.setAttribute("transform", transform);
 // }
 
-////////////////////////////////////////
-// Step 3: Driving cart
-////////////////////////////////////////
 function draw() {
   const pos = cart.updateByVolume(
     controls.isLeftPressed,
@@ -80,7 +75,6 @@ function draw() {
   const transform = `translate(${pos.x}, ${pos.y}) rotate(${pos.degrees})`;
   player!.setAttribute("transform", transform);
 
-  // Part of step 3.
   peerClient.send({ type: "transform", payload: pos });
 }
 
