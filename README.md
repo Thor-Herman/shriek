@@ -30,7 +30,7 @@ Endre kode under `./client/` for å se resultatet i nettleseren.
 
 ## Oppgaver
 
-Slides: http://shriek.variant.no/
+Slides: https://shriek-slides.vercel.app/
 
 #### Oppgave 1: Volume progress (20min)
 
