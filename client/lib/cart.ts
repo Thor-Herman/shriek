@@ -6,10 +6,10 @@ const CAR_START_SPEED = 0;
 const CAR_START_ANGLE = 0;
 const CAR_ACCELERATION_MIN = 0.1;
 const CAR_ACCELERATION_MAX = 0.3;
-const CAR_ROTATION = 0.04 * Math.PI;
+const CAR_ROTATION = 0.02 * Math.PI;
 const GROUNDSPEED_DECAY_MULT = 0.94;
 const CAR_MIN_TURN_SPEED = 0.5; // Minimum speed to turn
-const CAR_MIN_SPEED = 0.1; // Minimum speed the car can go
+const CAR_MIN_SPEED = 0.05; // Minimum speed the car can go
 const CAR_BOUNCE_TIMER = 15;
 
 export default class Car {
